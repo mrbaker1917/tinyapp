@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/mrbaker1917/tinyapp/issues"
   },
-  "homepage": "https://github.com/mrbaker1917/tinyapp#readme"
+  "homepage": "https://github.com/mrbaker1917/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
