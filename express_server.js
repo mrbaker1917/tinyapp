@@ -35,6 +35,11 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
+app.get("/register", (req, res) => {
+  let templateVars = { username: req.cookies["username"], urls: urlDatabase };
+  res.render("register", templateVars);
+});
+
 app.post("/urls", (req, res) => {
   const tinyUrl = generateRandomString();
   urlDatabase[tinyUrl] = req.body.longURL;
