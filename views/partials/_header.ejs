@@ -6,9 +6,13 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
+      <div class="navbar-nav justify-content-between">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+        <form method="POST" action="/login" class="form-inline">
+          <input name="username" placeholder="Username" type="text" class="form-control mr-sm-2" id="inputGroup-sizing-default">
+          <button value="Submit" type="login" class="btn btn-outline-dark my-2 my-sm-0">login</button>
+        </form>
       </div>
     </div>
   </nav>
