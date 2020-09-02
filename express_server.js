@@ -39,7 +39,6 @@ const users = {
 };
 
 const lookUpUserByEmail = (email) => {
-  console.log(users);
   for (let user in users) {
     if (users[user].email === email) {
       return user;
@@ -56,8 +55,13 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   let userObj = users[req.cookies.user_id];
-  let templateVars = { user: userObj, urls: urlDatabase };
-  res.render("urls_new", templateVars);
+  if (userObj === undefined) {
+    res.redirect("/login");
+  }
+  if (userObj) {
+    let templateVars = { user: userObj, urls: urlDatabase };
+    res.render("urls_new", templateVars);
+  }
 });
 
 app.get("/register", (req, res) => {
