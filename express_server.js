@@ -120,9 +120,23 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const user = req.body.user;
-  res.cookie('user', user);
-  res.redirect('/urls');
+  const email = req.body.email;
+  const password = req.body.password;
+  const userID = lookUpUserByEmail(email);
+  if (userID === null) {
+    res.status(403);
+    res.send("No user with that email address is registered.");
+    return;
+  }
+  if (users[userID].password !== password) {
+    res.status(403);
+    res.send("Something is wrong with your email or password.");
+    return;
+  }
+  if (users[userID].password === password) {
+    res.cookie("user_id", userID);
+    res.redirect("/urls");
+  }
 });
 
 app.post("/logout", (req, res) => {
