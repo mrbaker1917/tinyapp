@@ -66,6 +66,12 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
+app.get("/login", (req, res) => {
+  let userObj = users[req.cookies.user_id];
+  let templateVars = { user: userObj, urls: urlDatabase };
+  res.render("login", templateVars);
+});
+
 app.post("/register", (req, res) => {
   if (req.body.email === "" || req.body.password === "") {
     res.status(400);

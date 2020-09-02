@@ -18,12 +18,10 @@
         <button value="Submit" type="submit" class="btn btn-outline-dark my-2 my-sm-0">logout</button>
       </form>
       <% } else { %>
-      <form method="POST" action="/login" class="form-inline">
-        <input name="userEmail" placeholder="Username" type="text" class="form-control mr-sm-2"
-          id="inputGroup-sizing-default">
-        <button value="Submit" type="login" class="btn btn-outline-dark my-2 my-sm-0">login</button>
+        <div>
+          <a href="/login"><button value="Submit" type="login" class="btn btn-outline-dark my-2 my-sm-0">login</button></a>
+        </div>
         <% } %>
-      </form>
     </div>
   </nav>
 </header>
