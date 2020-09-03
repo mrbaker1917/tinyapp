@@ -47,10 +47,27 @@ const lookUpUserByEmail = (email) => {
   return null;
 };
 
+const urlsForUser = (id) => {
+  const filteredDB = {};
+  for (let shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      filteredDB[shortURL] = urlDatabase[shortURL].longURL;
+    }
+  }
+  return filteredDB;
+};
+
 app.get("/urls", (req, res) => {
   let userObj = users[req.cookies.user_id];
-  let templateVars = { user: userObj, urls: urlDatabase };
-  res.render("urls_index", templateVars);
+
+  if (userObj === undefined) {
+    res.redirect("/login");
+  }
+  const filteredURLS = urlsForUser(req.cookies.user_id);
+  let templateVars = { user: userObj, urls: filteredURLS };
+  if (userObj) {
+    res.render("urls_index", templateVars);
+  }
 });
 
 app.get("/urls/new", (req, res) => {
@@ -131,8 +148,7 @@ app.post("/login", (req, res) => {
   const userID = lookUpUserByEmail(email);
   if (userID === null) {
     res.status(403);
-    res.send("No user with that email address is registered.");
-    return;
+    return res.redirect("/register");
   }
   if (users[userID].password !== password) {
     res.status(403);
