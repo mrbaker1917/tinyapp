@@ -4,7 +4,7 @@ const PORT = 8080;
 //const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const getUserByEmail = require('./helpers');
+const { getUserByEmail } = require('./helpers');
 
 app.use(cookieSession({
   name: 'session',
