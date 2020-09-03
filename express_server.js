@@ -4,6 +4,7 @@ const PORT = 8080;
 //const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const getUserByEmail = require('./helpers');
 
 app.use(cookieSession({
   name: 'session',
@@ -41,15 +42,6 @@ const users = {
     email: "user2@example.com",
     password: "dishwasher-funk"
   }
-};
-
-const lookUpUserByEmail = (email) => {
-  for (let user in users) {
-    if (users[user].email === email) {
-      return user;
-    }
-  }
-  return null;
 };
 
 const urlsForUser = (id) => {
@@ -104,7 +96,7 @@ app.post("/register", (req, res) => {
     res.send("Please enter a valid email and password.");
     return;
   }
-  let foundUser = lookUpUserByEmail(req.body.email);
+  let foundUser = getUserByEmail(req.body.email, users);
   if (foundUser !== null) {
     res.status(400);
     res.send("That email address is already registered.");
@@ -162,7 +154,7 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const userID = lookUpUserByEmail(email);
+  const userID = getUserByEmail(email, users);
   if (userID === null) {
     res.status(403);
     return res.redirect("/register");
