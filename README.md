@@ -7,8 +7,9 @@ user can access the edit page in order to click the link to the longURL.
 
 ## Final Product
 
-!["screenshot description"](#)
-!["screenshot description"](#)
+!["screenshot of login page"](https://github.com/mrbaker1917/tinyapp/blob/master/docs/login-page.png?raw=true)
+!["screenshot TinyURL creation page"](https://github.com/mrbaker1917/tinyapp/blob/master/docs/new-TinyURL-page.png?raw=true)
+!["screenshot of urls page"](https://github.com/mrbaker1917/tinyapp/blob/master/docs/urls-page.png?raw=true)
 
 ## Dependencies
 
