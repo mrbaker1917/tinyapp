@@ -34,7 +34,7 @@ describe('generateRandomString', function() {
     const expectedOutput = 6;
     assert.equal(actual, expectedOutput);
   });
-  it("generates different strings of six characters each time", function() {
+  it("should generate different strings of six characters each time", function() {
     const actual1 = generateRandomString();
     const actual2 = generateRandomString();
     assert.notEqual(actual1, actual2);
