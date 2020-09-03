@@ -4,7 +4,7 @@ const PORT = 8080;
 //const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const { getUserByEmail } = require('./helpers');
+const { getUserByEmail, generateRandomString } = require('./helpers');
 
 app.use(cookieSession({
   name: 'session',
@@ -15,16 +15,6 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set('view engine', 'ejs');
-
-const generateRandomString = () => {
-  let ranStr = "";
-  const alphaNum = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  for (let i = 0; i < 6; i++) {
-    let randIndex = Math.floor(Math.random() * 61);
-    ranStr += alphaNum[randIndex];
-  }
-  return ranStr;
-};
 
 const urlDatabase = {
   b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },

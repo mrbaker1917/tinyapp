@@ -7,4 +7,14 @@ const getUserByEmail = (email, database) => {
   return null;
 };
 
-module.exports = { getUserByEmail };
+const generateRandomString = () => {
+  let ranStr = "";
+  const alphaNum = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  for (let i = 0; i < 6; i++) {
+    let randIndex = Math.floor(Math.random() * 61);
+    ranStr += alphaNum[randIndex];
+  }
+  return ranStr;
+};
+
+module.exports = { getUserByEmail, generateRandomString };
