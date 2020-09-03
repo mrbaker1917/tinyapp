@@ -130,15 +130,25 @@ app.get("/u/:shortURL", (req, res) => {
 
 // deletes shortURL prop
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect("/urls/");
+  let userObj = users[req.cookies.user_id];
+  if (userObj === undefined) {
+    return res.redirect("/login");
+  } else {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls/");
+  }
 });
 
 app.post("/urls/:shortURL", (req, res) => {
-  const shortURL = req.params.shortURL;
-  const longURL = req.body.newLongURL;
-  urlDatabase[shortURL] = { longURL: longURL, userID: req.cookies.user_id };
-  res.redirect('/urls/');
+  let userObj = users[req.cookies.user_id];
+  if (userObj === undefined) {
+    return res.redirect("/login");
+  } else {
+    const shortURL = req.params.shortURL;
+    const longURL = req.body.newLongURL;
+    urlDatabase[shortURL] = { longURL: longURL, userID: req.cookies.user_id };
+    res.redirect('/urls/');
+  }
 });
 
 app.post("/login", (req, res) => {
