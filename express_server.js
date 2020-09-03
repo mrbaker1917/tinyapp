@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = 8080;
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 app.use(cookieParser());
 
@@ -106,10 +107,13 @@ app.post("/register", (req, res) => {
     return;
   }
   let userID = generateRandomString();
-  users[userID] = { id: userID, email: req.body.email, password: req.body.password };
+  const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  users[userID] = { id: userID, email: req.body.email, hashedPassword: hashedPassword};
   res.cookie('user_id', userID);
   res.redirect("/urls");
 });
+
 
 app.post("/urls", (req, res) => {
   const tinyUrl = generateRandomString();
@@ -159,12 +163,12 @@ app.post("/login", (req, res) => {
     res.status(403);
     return res.redirect("/register");
   }
-  if (users[userID].password !== password) {
+  if (!bcrypt.compareSync(password, users[userID].hashedPassword)) {
     res.status(403);
     res.send("Something is wrong with your email or password.");
     return;
   }
-  if (users[userID].password === password) {
+  if (bcrypt.compareSync(password, users[userID].hashedPassword)) {
     res.cookie("user_id", userID);
     res.redirect("/urls");
   }
@@ -172,7 +176,7 @@ app.post("/login", (req, res) => {
 
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
-  res.redirect('/urls');
+  res.redirect('/login');
 });
 
 app.listen(PORT, () => {
