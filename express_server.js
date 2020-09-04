@@ -147,7 +147,8 @@ app.post("/urls/:shortURL", (req, res) => {
   } else {
     const shortURL = req.params.shortURL;
     const longURL = req.body.newLongURL;
-    urlDatabase[shortURL] = { longURL: longURL, userID: req.session.user_id };
+    urlDatabase[shortURL].longURL = longURL;
+    //userID = req.session.user_id;
     res.redirect('/urls/');
   }
 });
