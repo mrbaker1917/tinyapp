@@ -17,4 +17,9 @@ const generateRandomString = () => {
   return ranStr;
 };
 
-module.exports = { getUserByEmail, generateRandomString };
+const getCurrentDate = () => {
+  let date = new Date().toString().slice(3, 15);
+  return date;
+};
+
+module.exports = { getUserByEmail, generateRandomString, getCurrentDate };

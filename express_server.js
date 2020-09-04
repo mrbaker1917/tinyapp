@@ -1,10 +1,9 @@
 const express = require('express');
 const app = express();
 const PORT = 8080;
-//const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const { getUserByEmail, generateRandomString } = require('./helpers');
+const { getUserByEmail, generateRandomString, getCurrentDate } = require('./helpers');
 
 app.use(cookieSession({
   name: 'session',
@@ -16,11 +15,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set('view engine', 'ejs');
 
+// starter database for urls
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
+  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW", date: 'Thu Sep 03 2020' },
+  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW", date: 'Thu Sep 03 2020' }
 };
 
+// starter database for users
 const users = {
   "userRandomID": {
     id: "userRandomID",
@@ -34,29 +35,31 @@ const users = {
   }
 };
 
+// filters URLs for specific user to view
 const urlsForUser = (id) => {
   const filteredDB = {};
   for (let shortURL in urlDatabase) {
     if (urlDatabase[shortURL].userID === id) {
-      filteredDB[shortURL] = urlDatabase[shortURL].longURL;
+      filteredDB[shortURL] = urlDatabase[shortURL];
     }
   }
   return filteredDB;
 };
 
+// retrieves and shows URLs for specific user
 app.get("/urls", (req, res) => {
   let userObj = users[req.session.user_id];
-
   if (userObj === undefined) {
     res.redirect("/login");
   }
   const filteredURLS = urlsForUser(req.session.user_id);
-  let templateVars = { user: userObj, urls: filteredURLS };
+  let templateVars = { user: userObj, urlsObjs: filteredURLS };
   if (userObj) {
     res.render("urls_index", templateVars);
   }
 });
 
+// retrieves new URL page to enter URL if logged in
 app.get("/urls/new", (req, res) => {
   let userObj = users[req.session.user_id];
   if (userObj === undefined) {
@@ -68,18 +71,35 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
+// shows registration page for new users
 app.get("/register", (req, res) => {
   let userObj = users[req.session.user_id];
   let templateVars = { user: userObj, urls: urlDatabase };
   res.render("register", templateVars);
 });
 
+// shows login page for registered users
 app.get("/login", (req, res) => {
   let userObj = users[req.session.user_id];
   let templateVars = { user: userObj, urls: urlDatabase };
   res.render("login", templateVars);
 });
 
+// shows shortURL edit page
+app.get("/urls/:shortURL", (req, res) => {
+  let date = getCurrentDate();
+  let userObj = users[req.session.user_id];
+  let templateVars = { user: userObj, shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, date: date };
+  res.render("urls_show", templateVars);
+});
+
+// redirects user to longURL website
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL].longURL;
+  res.redirect(longURL);
+});
+
+// registers new users, if not already registered
 app.post("/register", (req, res) => {
   if (req.body.email === "" || req.body.password === "") {
     res.status(400);
@@ -95,27 +115,17 @@ app.post("/register", (req, res) => {
   let userID = generateRandomString();
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
-  users[userID] = { id: userID, email: req.body.email, hashedPassword: hashedPassword};
+  users[userID] = { id: userID, email: req.body.email, hashedPassword: hashedPassword };
   req.session.user_id = userID;
   res.redirect("/urls");
 });
 
-
+// creates new TinyURL for longURL and adds to urlDatabase; redirects to tinyURL edit page.
 app.post("/urls", (req, res) => {
   const tinyUrl = generateRandomString();
-  urlDatabase[tinyUrl] = { longURL: req.body.longURL, userID: req.session.user_id };
+  const date = getCurrentDate();
+  urlDatabase[tinyUrl] = { longURL: req.body.longURL, userID: req.session.user_id, date: date };
   res.redirect("/urls/" + tinyUrl);
-});
-
-app.get("/urls/:shortURL", (req, res) => {
-  let userObj = users[req.session.user_id];
-  let templateVars = { user: userObj, shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL };
-  res.render("urls_show", templateVars);
-});
-
-app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
 });
 
 // deletes shortURL prop
@@ -129,6 +139,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 });
 
+// adds new TinyURL, URL, and user_id to urlDatabase; redirects to show all user's URLs.
 app.post("/urls/:shortURL", (req, res) => {
   let userObj = users[req.session.user_id];
   if (userObj === undefined) {
@@ -141,6 +152,7 @@ app.post("/urls/:shortURL", (req, res) => {
   }
 });
 
+// enables user to login, after checking that email and password are correct.
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -160,6 +172,7 @@ app.post("/login", (req, res) => {
   }
 });
 
+// logs user out of app and deletes session cookie.
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect('/urls');
