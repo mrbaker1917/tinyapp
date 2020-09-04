@@ -3,6 +3,8 @@ const app = express();
 const PORT = 8080;
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const methodOverride = require('method-override');
+const bodyParser = require('body-parser');
 const { getUserByEmail, generateRandomString, getCurrentDate } = require('./helpers');
 
 app.use(cookieSession({
@@ -10,9 +12,8 @@ app.use(cookieSession({
   keys: ["bHbJ8765", "b1P2m3Td"]
 }));
 
-const bodyParser = require('body-parser');
+app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.set('view engine', 'ejs');
 
 // starter database for urls
@@ -129,7 +130,7 @@ app.post("/urls", (req, res) => {
 });
 
 // deletes shortURL prop
-app.post("/urls/:shortURL/delete", (req, res) => {
+app.delete("/urls/:shortURL/", (req, res) => {
   let userObj = users[req.session.user_id];
   if (userObj === undefined) {
     return res.redirect("/login");

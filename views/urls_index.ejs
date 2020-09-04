@@ -40,7 +40,7 @@
             </a>
           </td>
           <td>
-            <form method="POST" action="/urls/<%= url %>/delete" id="<%= url %>">
+            <form method="POST" action="/urls/<%= url %>?_method=DELETE"" id="<%= url %>">
               <button form="<%= url %>" value="submit" type="submit" class="btn btn-outline-danger">Delete</button>
             </form>
           </td>
