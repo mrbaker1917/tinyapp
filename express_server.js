@@ -141,7 +141,7 @@ app.delete("/urls/:shortURL/", (req, res) => {
 });
 
 // adds new TinyURL, URL, and user_id to urlDatabase; redirects to show all user's URLs.
-app.post("/urls/:shortURL", (req, res) => {
+app.put("/urls/:shortURL", (req, res) => {
   let userObj = users[req.session.user_id];
   if (userObj === undefined) {
     return res.redirect("/login");

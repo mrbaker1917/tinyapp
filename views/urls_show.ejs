@@ -20,7 +20,7 @@
       </div>
     <div class="card-footer text-muted">
       <h2>Edit</h2>
-      <form method="POST" action="/urls/<%= shortURL %>">
+      <form method="POST" action="/urls/<%= shortURL %>?_method=PUT">
         <label for="newLongURL">New URL: </label>
         <input name="newLongURL" id="newLongURL" type="url">
         <button value="submit" type="submit" class="btn btn-primary">Submit</button>
