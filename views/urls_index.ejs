@@ -31,7 +31,7 @@
       <tbody>
         <% for(let url in urlsObjs) { %>
         <tr>
-          <td><%= url %></td>
+          <td><a target="_blank" href="<%= urlsObjs[url].longURL %>"><%= url %></a></td>
           <td><%= urlsObjs[url].longURL %></td>
           <td><%= urlsObjs[url].date %></td>
           <td>
