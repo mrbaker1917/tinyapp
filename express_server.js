@@ -5,7 +5,7 @@ const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
-const { getUserByEmail, generateRandomString, getCurrentDate } = require('./helpers');
+const { getUserByEmail, generateRandomString, getCurrentDate, urlsForUser } = require('./helpers');
 
 app.use(cookieSession({
   name: 'session',
@@ -36,16 +36,7 @@ const users = {
   }
 };
 
-// filters URLs for specific user to view
-const urlsForUser = (id) => {
-  const filteredDB = {};
-  for (let shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      filteredDB[shortURL] = urlDatabase[shortURL];
-    }
-  }
-  return filteredDB;
-};
+
 
 // checks if current user_id is logged in; if not redirects to login page
 // otherwise, provides user home page with that user's tinyURLs
@@ -54,7 +45,7 @@ app.get("/urls", (req, res) => {
   if (userObj === undefined) {
     res.redirect("/login");
   }
-  const filteredURLS = urlsForUser(req.session.user_id);
+  const filteredURLS = urlsForUser(req.session.user_id, urlDatabase);
   let templateVars = { user: userObj, urlsObjs: filteredURLS };
   if (userObj) {
     res.render("urls_index", templateVars);

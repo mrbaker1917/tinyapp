@@ -22,4 +22,15 @@ const getCurrentDate = () => {
   return date;
 };
 
-module.exports = { getUserByEmail, generateRandomString, getCurrentDate };
+// filters URLs for specific user to view
+const urlsForUser = (id, database) => {
+  const filteredDB = {};
+  for (let shortURL in database) {
+    if (database[shortURL].userID === id) {
+      filteredDB[shortURL] = database[shortURL];
+    }
+  }
+  return filteredDB;
+};
+
+module.exports = { getUserByEmail, generateRandomString, getCurrentDate, urlsForUser };
