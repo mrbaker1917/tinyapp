@@ -72,6 +72,10 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
+app.get("../favicon.ico", (req, res) => {
+  res.render("../favicon.ico");
+});
+
 // shows registration page for new users
 app.get("/register", (req, res) => {
   let userObj = users[req.session.user_id];
