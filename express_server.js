@@ -108,7 +108,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 // registers new users, if not already registered
 app.post("/register", (req, res) => {
-  if (req.body.email === "" || req.body.password === "") {
+  if (!req.body.email || !req.body.password) {
     res.status(400);
     let templateVars = { user: undefined,  message: ">> Please enter a valid email and password." };
     res.render("register", templateVars);
