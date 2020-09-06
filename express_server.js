@@ -47,7 +47,8 @@ const urlsForUser = (id) => {
   return filteredDB;
 };
 
-// retrieves and shows URLs for specific user
+// checks if current user_id is logged in; if not redirects to login page
+// otherwise, provides user home page with that user's tinyURLs
 app.get("/urls", (req, res) => {
   let userObj = users[req.session.user_id];
   if (userObj === undefined) {
@@ -80,7 +81,7 @@ app.get("/urls/new", (req, res) => {
 // shows registration page for new users
 app.get("/register", (req, res) => {
   let userObj = users[req.session.user_id];
-  let templateVars = { user: userObj, urls: urlDatabase };
+  let templateVars = { user: userObj, urls: urlDatabase, message: undefined };
   res.render("register", templateVars);
 });
 
@@ -109,7 +110,8 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/register", (req, res) => {
   if (req.body.email === "" || req.body.password === "") {
     res.status(400);
-    res.send("Please enter a valid email and password.");
+    let templateVars = { user: undefined,  message: ">> Please enter a valid email and password." };
+    res.render("register", templateVars);
     return;
   }
   let foundUser = getUserByEmail(req.body.email, users);
@@ -170,7 +172,7 @@ app.post("/login", (req, res) => {
   }
   if (!bcrypt.compareSync(password, users[userID].hashedPassword)) {
     res.status(403);
-    res.send("Something is wrong with your email or password.");
+    res.send("Something is wrong with your email or password. Please try again.");
     return;
   }
   if (bcrypt.compareSync(password, users[userID].hashedPassword)) {

@@ -16,6 +16,9 @@
 
     <main style="margin: 1em;">
       <h3>Please Create an Account to begin making tiny URLs:</h3>
+      <% if (user === undefined) {%>
+        <h4 style="color: maroon"><%= message %></h4>
+        <%}%>
       <form  action="/register" method="POST">
         <div class="form-group mb-2">
           <label for="email">Enter your email address:</label>
