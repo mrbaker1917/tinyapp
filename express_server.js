@@ -88,7 +88,7 @@ app.get("/register", (req, res) => {
 // shows login page for registered users
 app.get("/login", (req, res) => {
   let userObj = users[req.session.user_id];
-  let templateVars = { user: userObj, urls: urlDatabase };
+  let templateVars = { user: userObj, urls: urlDatabase, message: undefined };
   res.render("login", templateVars);
 });
 
@@ -168,11 +168,13 @@ app.post("/login", (req, res) => {
   const userID = getUserByEmail(email, users);
   if (userID === null) {
     res.status(403);
-    return res.redirect("/register");
+    let templateVars = { user: undefined,  message: ">> That email address is not registered. Please create an account." };
+    return res.render("register", templateVars);
   }
   if (!bcrypt.compareSync(password, users[userID].hashedPassword)) {
     res.status(403);
-    res.send("Something is wrong with your email or password. Please try again.");
+    let templateVars = { user: undefined,  message: ">> That email and password combination do not match. Please try again." };
+    res.render("login", templateVars);
     return;
   }
   if (bcrypt.compareSync(password, users[userID].hashedPassword)) {
