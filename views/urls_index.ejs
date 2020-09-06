@@ -4,11 +4,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
-  <link rel="icon" href="../favicon.ico" type="image/png"  />
+  <link rel="icon" href="../favicon.ico" type="image/png" />
   <title>TinyApp</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  
+
 
 </head>
 
@@ -18,6 +18,9 @@
   </header>
   <main style="margin: 1em;">
     <h3>My URLs</h3>
+    <% if (message) {%>
+    <h5 style="color: maroon"><%= message %></h5>
+    <%}%>
     <table class="table">
       <thead>
         <tr>
@@ -30,23 +33,23 @@
       </thead>
       <tbody>
         <% for(let url in urlsObjs) { %>
-        <tr>
-          <td><a target="_blank" href="<%= urlsObjs[url].longURL %>"><%= url %></a></td>
-          <td><%= urlsObjs[url].longURL %></td>
-          <td><%= urlsObjs[url].date %></td>
-          <td>
-            <a href="/urls/<%= url %>">
-              <button type="button" class="btn btn-outline-primary">Edit</button>
-            </a>
-          </td>
-          <td>
-            <form method="POST" action="/urls/<%= url %>?_method=DELETE"" id="<%= url %>">
-              <button form="<%= url %>" value="submit" type="submit" class="btn btn-outline-danger">Delete</button>
-            </form>
-          </td>
-        </tr>
-        <% } %>
-      </tbody>
+    <tr>
+      <td><a target="_blank" href="<%= urlsObjs[url].longURL %>"><%= url %></a></td>
+      <td><%= urlsObjs[url].longURL %></td>
+      <td><%= urlsObjs[url].date %></td>
+      <td>
+        <a href="/urls/<%= url %>">
+          <button type="button" class="btn btn-outline-primary">Edit</button>
+        </a>
+      </td>
+      <td>
+        <form method="POST" action="/urls/<%= url %>?_method=DELETE"" id=" <%= url %>">
+          <button form="<%= url %>" value="submit" type="submit" class="btn btn-outline-danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+    <% } %>
+    </tbody>
     </table>
   </main>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"

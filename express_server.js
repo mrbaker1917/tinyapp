@@ -36,8 +36,6 @@ const users = {
   }
 };
 
-
-
 // checks if current user_id is logged in; if not redirects to login page
 // otherwise, provides user home page with that user's tinyURLs
 app.get("/urls", (req, res) => {
@@ -46,7 +44,7 @@ app.get("/urls", (req, res) => {
     res.redirect("/login");
   }
   const filteredURLS = urlsForUser(req.session.user_id, urlDatabase);
-  let templateVars = { user: userObj, urlsObjs: filteredURLS };
+  let templateVars = { user: userObj, urlsObjs: filteredURLS, message: "" };
   if (userObj) {
     res.render("urls_index", templateVars);
   }
@@ -76,7 +74,7 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
-// shows login page for registered users
+// shows login page for registered user
 app.get("/login", (req, res) => {
   let userObj = users[req.session.user_id];
   let templateVars = { user: userObj, urls: urlDatabase, message: undefined };
@@ -87,8 +85,19 @@ app.get("/login", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let date = getCurrentDate();
   let userObj = users[req.session.user_id];
-  let templateVars = { user: userObj, shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, date: date };
-  res.render("urls_show", templateVars);
+  if (userObj === undefined) {
+    let templateVars = { user: undefined, message: ">> Please login to view your TinyURLs." };
+    res.render("login", templateVars);
+    return;
+  } else if (urlDatabase[req.params.shortURL].userID !== req.session.user_id) {
+    const filteredURLS = urlsForUser(req.session.user_id, urlDatabase);
+    let templateVars = { user: userObj, urlsObjs: filteredURLS, message: ">> That TinyURL does not belong to you." };
+    res.render("urls_index", templateVars);
+    return;
+  } else {
+    let templateVars = { user: userObj, shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, date: date };
+    res.render("urls_show", templateVars);
+  }
 });
 
 // redirects user to longURL website
@@ -97,18 +106,27 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+app.get("/urls/:id", (req, res) => {
+  let userObj = users[req.session.user_id];
+  if (userObj === undefined) {
+    let templateVars = { user: undefined, message: ">> Please login to view your TinyURLs." };
+    res.render("login", templateVars);
+    return;
+  }
+});
+
 // registers new users, if not already registered
 app.post("/register", (req, res) => {
   if (!req.body.email || !req.body.password) {
     res.status(400);
-    let templateVars = { user: undefined,  message: ">> Please enter a valid email and password." };
+    let templateVars = { user: undefined, message: ">> Please enter a valid email and password." };
     res.render("register", templateVars);
     return;
   }
   let foundUser = getUserByEmail(req.body.email, users);
   if (foundUser !== null) {
     res.status(400);
-    let templateVars = { user: undefined,  message: ">> That email address is already registered. Please login." };
+    let templateVars = { user: undefined, message: ">> That email address is already registered. Please login." };
     res.render("login", templateVars);
     return;
   }
@@ -160,12 +178,12 @@ app.post("/login", (req, res) => {
   const userID = getUserByEmail(email, users);
   if (userID === null) {
     res.status(403);
-    let templateVars = { user: undefined,  message: ">> That email address is not registered. Please create an account." };
+    let templateVars = { user: undefined, message: ">> That email address is not registered. Please create an account." };
     return res.render("register", templateVars);
   }
   if (!bcrypt.compareSync(password, users[userID].hashedPassword)) {
     res.status(403);
-    let templateVars = { user: undefined,  message: ">> That email and password combination do not match. Please try again." };
+    let templateVars = { user: undefined, message: ">> That email and password combination do not match. Please try again." };
     res.render("login", templateVars);
     return;
   }
