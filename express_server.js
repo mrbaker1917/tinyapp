@@ -117,7 +117,8 @@ app.post("/register", (req, res) => {
   let foundUser = getUserByEmail(req.body.email, users);
   if (foundUser !== null) {
     res.status(400);
-    res.send("That email address is already registered.");
+    let templateVars = { user: undefined,  message: ">> That email address is already registered. Please login." };
+    res.render("login", templateVars);
     return;
   }
   let userID = generateRandomString();
