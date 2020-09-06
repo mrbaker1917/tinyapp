@@ -60,6 +60,10 @@ app.get("/urls", (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.redirect("/urls");
+});
+
 // retrieves new URL page to enter URL if logged in
 app.get("/urls/new", (req, res) => {
   let userObj = users[req.session.user_id];
@@ -72,9 +76,6 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
-app.get("../favicon.ico", (req, res) => {
-  res.render("../favicon.ico");
-});
 
 // shows registration page for new users
 app.get("/register", (req, res) => {
