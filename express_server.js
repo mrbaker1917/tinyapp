@@ -39,12 +39,12 @@ const users = {
 // checks if current user_id is logged in; if not redirects to login page
 // otherwise, provides user home page with that user's tinyURLs
 app.get("/urls", (req, res) => {
-  let userObj = users[req.session.user_id];
+  const userObj = users[req.session.user_id];
   if (userObj === undefined) {
     res.redirect("/login");
   }
   const filteredURLS = urlsForUser(req.session.user_id, urlDatabase);
-  let templateVars = { user: userObj, urlsObjs: filteredURLS, message: "" };
+  const templateVars = { user: userObj, urlsObjs: filteredURLS, message: "" };
   if (userObj) {
     res.render("urls_index", templateVars);
   }
@@ -56,12 +56,12 @@ app.get("/", (req, res) => {
 
 // retrieves new URL page to enter URL if logged in
 app.get("/urls/new", (req, res) => {
-  let userObj = users[req.session.user_id];
+  const userObj = users[req.session.user_id];
   if (userObj === undefined) {
     res.redirect("/login");
   }
   if (userObj) {
-    let templateVars = { user: userObj, urls: urlDatabase };
+    const templateVars = { user: userObj, urls: urlDatabase };
     res.render("urls_new", templateVars);
   }
 });
@@ -69,33 +69,33 @@ app.get("/urls/new", (req, res) => {
 
 // shows registration page for new users
 app.get("/register", (req, res) => {
-  let userObj = users[req.session.user_id];
-  let templateVars = { user: userObj, urls: urlDatabase, message: undefined };
+  const userObj = users[req.session.user_id];
+  const templateVars = { user: userObj, urls: urlDatabase, message: undefined };
   res.render("register", templateVars);
 });
 
 // shows login page for registered user
 app.get("/login", (req, res) => {
-  let userObj = users[req.session.user_id];
-  let templateVars = { user: userObj, urls: urlDatabase, message: undefined };
+  const userObj = users[req.session.user_id];
+  const templateVars = { user: userObj, urls: urlDatabase, message: undefined };
   res.render("login", templateVars);
 });
 
 // shows shortURL edit page
 app.get("/urls/:shortURL", (req, res) => {
-  let date = getCurrentDate();
-  let userObj = users[req.session.user_id];
+  const date = getCurrentDate();
+  const userObj = users[req.session.user_id];
   if (userObj === undefined) {
-    let templateVars = { user: undefined, message: ">> Please login to view your TinyURLs." };
+    const templateVars = { user: undefined, message: ">> Please login to view your TinyURLs." };
     res.render("login", templateVars);
     return;
   } else if (urlDatabase[req.params.shortURL].userID !== req.session.user_id) {
     const filteredURLS = urlsForUser(req.session.user_id, urlDatabase);
-    let templateVars = { user: userObj, urlsObjs: filteredURLS, message: ">> That TinyURL does not belong to you." };
+    const templateVars = { user: userObj, urlsObjs: filteredURLS, message: ">> That TinyURL does not belong to you." };
     res.render("urls_index", templateVars);
     return;
   } else {
-    let templateVars = { user: userObj, shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, date: date };
+    const templateVars = { user: userObj, shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, date: date };
     res.render("urls_show", templateVars);
   }
 });
@@ -107,9 +107,9 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  let userObj = users[req.session.user_id];
+  const userObj = users[req.session.user_id];
   if (userObj === undefined) {
-    let templateVars = { user: undefined, message: ">> Please login to view your TinyURLs." };
+    const templateVars = { user: undefined, message: ">> Please login to view your TinyURLs." };
     res.render("login", templateVars);
     return;
   }
@@ -119,18 +119,18 @@ app.get("/urls/:id", (req, res) => {
 app.post("/register", (req, res) => {
   if (!req.body.email || !req.body.password) {
     res.status(400);
-    let templateVars = { user: undefined, message: ">> Please enter a valid email and password." };
+    const templateVars = { user: undefined, message: ">> Please enter a valid email and password." };
     res.render("register", templateVars);
     return;
   }
-  let foundUser = getUserByEmail(req.body.email, users);
+  const foundUser = getUserByEmail(req.body.email, users);
   if (foundUser !== null) {
     res.status(400);
-    let templateVars = { user: undefined, message: ">> That email address is already registered. Please login." };
+    const templateVars = { user: undefined, message: ">> That email address is already registered. Please login." };
     res.render("login", templateVars);
     return;
   }
-  let userID = generateRandomString();
+  const userID = generateRandomString();
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
   users[userID] = { id: userID, email: req.body.email, hashedPassword: hashedPassword };
@@ -148,7 +148,7 @@ app.post("/urls", (req, res) => {
 
 // deletes shortURL prop
 app.delete("/urls/:shortURL/", (req, res) => {
-  let userObj = users[req.session.user_id];
+  const userObj = users[req.session.user_id];
   if (userObj === undefined) {
     return res.redirect("/login");
   } else {
@@ -159,7 +159,7 @@ app.delete("/urls/:shortURL/", (req, res) => {
 
 // adds new TinyURL, URL, and user_id to urlDatabase; redirects to show all user's URLs.
 app.put("/urls/:shortURL", (req, res) => {
-  let userObj = users[req.session.user_id];
+  const userObj = users[req.session.user_id];
   if (userObj === undefined) {
     return res.redirect("/login");
   } else {
@@ -178,12 +178,12 @@ app.post("/login", (req, res) => {
   const userID = getUserByEmail(email, users);
   if (userID === null) {
     res.status(403);
-    let templateVars = { user: undefined, message: ">> That email address is not registered. Please create an account." };
+    const templateVars = { user: undefined, message: ">> That email address is not registered. Please create an account." };
     return res.render("register", templateVars);
   }
   if (!bcrypt.compareSync(password, users[userID].hashedPassword)) {
     res.status(403);
-    let templateVars = { user: undefined, message: ">> That email and password combination do not match. Please try again." };
+    const templateVars = { user: undefined, message: ">> That email and password combination do not match. Please try again." };
     res.render("login", templateVars);
     return;
   }
